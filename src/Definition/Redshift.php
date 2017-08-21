@@ -58,9 +58,14 @@ class Redshift extends Common
     public function getSQLDefinition()
     {
         $definition =  $this->getType();
-        if ($this->getLength() && $this->getLength() != "") {
-            $definition .= "(" . $this->getLength() . ")";
+
+        $typesWithoutLength = ['TIMESTAMP', 'DATE', 'FLOAT', 'BOOLEAN'];
+        if (!in_array($this->getBasetype(), $typesWithoutLength)) {
+            if ($this->getLength() && $this->getLength() != "") {
+                $definition .= "(" . $this->getLength() . ")";
+            }
         }
+
         if (!$this->isNullable()) {
             $definition .= " NOT NULL";
         }
@@ -134,7 +139,6 @@ class Redshift extends Common
             case "CHARACTER VARYING":
             case "TEXT":
             case "NVARCHAR":
-            case "TEXT":
                 if (is_null($length) || $length == "") {
                     break;
                 }
@@ -163,7 +167,89 @@ class Redshift extends Common
                     break;
                 }
                 break;
-
+            case "TIMESTAMP":
+            case "TIMESTAMPTZ":
+            case "TIMESTAMP WITHOUT TIME ZONE":
+            case "TIMESTAMP WITH TIME ZONE":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 8) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "DATE":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 4) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "INT2":
+            case "SMALLINT":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 2) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "INT":
+            case "INTEGER":
+            case "INT4":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 4) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "BIGINT":
+            case "INT8":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 8) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "DOUBLE PRECISION":
+            case "FLOAT8":
+            case "FLOAT":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 8) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "REAL":
+            case "FLOAT4":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 4) {
+                    $valid = false;
+                    break;
+                }
+                break;
+            case "BOOL":
+            case "BOOLEAN":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length) || (int)$length !== 1) {
+                    $valid = false;
+                    break;
+                }
+                break;
             default:
                 if (!is_null($length) && $length != "") {
                     $valid = false;
