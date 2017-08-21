@@ -33,16 +33,48 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
         new Redshift("NUMERIC", ["length" => "37,0"]);
         new Redshift("NUMERIC", ["length" => "37,37"]);
         new Redshift("NUMERIC", ["length" => "37"]);
+        new Redshift("REAL", ["length" => ""]);
+        new Redshift("FLOAT4", ["length" => "4"]);
+        new Redshift("FLOAT8", ["length" => ""]);
+        new Redshift("DOUBLE PRECISION", ["length" => "8"]);
+        new Redshift("FLOAT", ["length" => "8"]);
     }
 
     /**
      * @dataProvider invalidNumericLengths
      * @param $length
+     * @param $type
      */
-    public function testInvalidNumericLengths($length)
+    public function testInvalidNumericLengths($type, $length)
     {
         try {
-            new Redshift("NUMERIC", ["length" => $length]);
+            new Redshift($type, ["length" => $length]);
+            $this->fail("Exception not caught");
+        } catch (\Exception $e) {
+            $this->assertEquals(InvalidLengthException::class, get_class($e));
+        }
+    }
+
+    public function testValidDateLengths()
+    {
+        new Redshift("date");
+        new Redshift("DATE", ["length" => ""]);
+        new Redshift("DATE", ["length" => "4"]);
+        new Redshift("TIMESTAMP", ["length" => ""]);
+        new Redshift("TIMESTAMPTZ", ["length" => ""]);
+        new Redshift("TIMESTAMP WITHOUT TIME ZONE", ["length" => "8"]);
+        new Redshift("TIMESTAMP WITH TIME ZONE", ["length" => "8"]);
+    }
+
+    /**
+     * @dataProvider invalidDateLengths
+     * @param $type
+     * @param $length
+     */
+    public function testInvalidDateLengths($type, $length)
+    {
+        try {
+            new Redshift($type, ["length" => $length]);
             $this->fail("Exception not caught");
         } catch (\Exception $e) {
             $this->assertEquals(InvalidLengthException::class, get_class($e));
@@ -88,6 +120,27 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
     {
         try {
             new Redshift("CHAR", ["length" => $length]);
+            $this->fail("Exception not caught");
+        } catch (\Exception $e) {
+            $this->assertEquals(InvalidLengthException::class, get_class($e));
+        }
+    }
+
+    public function testValidBooleanLengths()
+    {
+        new Redshift("bool");
+        new Redshift("BOOL");
+        new Redshift("BOOLEAN", ["length" => "1"]);
+    }
+
+    /**
+     * @dataProvider invalidBooleanLengths
+     * @param $length
+     */
+    public function testInvalidBooleanLengths($length)
+    {
+        try {
+            new Redshift("BOOL", ["length" => $length]);
             $this->fail("Exception not caught");
         } catch (\Exception $e) {
             $this->assertEquals(InvalidLengthException::class, get_class($e));
@@ -140,6 +193,30 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
     {
         $datatype = new Redshift("VARCHAR", ["length" => "50", "nullable" => true, "compression" => "ZSTD"]);
         $this->assertEquals("VARCHAR(50) ENCODE ZSTD", $datatype->getSQLDefinition());
+
+        $definition = new Redshift("NUMERIC", ["length" => ""]);
+        $this->assertTrue($definition->getSQLDefinition() === "NUMERIC");
+
+        $definition = new Redshift("TIMESTAMPTZ", ["length" => ""]);
+        $this->assertTrue($definition->getSQLDefinition() === "TIMESTAMPTZ");
+
+        $definition = new Redshift("TIMESTAMPTZ", ["length" => "8"]);
+        $this->assertTrue($definition->getSQLDefinition() === "TIMESTAMPTZ");
+
+        $definition = new Redshift("DATE", ["length" => "4"]);
+        $this->assertTrue($definition->getSQLDefinition() === "DATE");
+
+        $definition = new Redshift("DATE");
+        $this->assertTrue($definition->getSQLDefinition() === "DATE");
+
+        $definition = new Redshift("FLOAT8", ["length" => "8"]);
+        $this->assertTrue($definition->getSQLDefinition() === "FLOAT8");
+
+        $definition = new Redshift("REAL", ["length" => "4"]);
+        $this->assertTrue($definition->getSQLDefinition() === "REAL");
+
+        $definition = new Redshift("BOOLEAN", ["length" => "1"]);
+        $this->assertTrue($definition->getSQLDefinition() === "BOOLEAN");
     }
 
     public function testToArray()
@@ -232,14 +309,39 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
     public function invalidNumericLengths()
     {
         return [
-            ["notANumber"],
-            ["0,0"],
-            ["38,0"],
-            ["-10,-5"],
-            ["-5,-10"],
-            ["37,a"],
-            ["a,37"],
-            ["a,a"]
+            ["NUMERIC", "notANumber"],
+            ["NUMERIC", "0,0"],
+            ["NUMERIC", "38,0"],
+            ["NUMERIC", "-10,-5"],
+            ["NUMERIC", "-5,-10"],
+            ["NUMERIC", "37,a"],
+            ["NUMERIC", "a,37"],
+            ["NUMERIC", "a,a"],
+            ["INT2", "notANumber"],
+            ["INT2", "0,0"],
+            ["INT2", "2,0"],
+            ["INT2", "-10"],
+            ["INT2", "4"],
+            ["INTEGER", "notANumber"],
+            ["INTEGER", "0,0"],
+            ["INTEGER", "2,0"],
+            ["INTEGER", "-10"],
+            ["INTEGER", "8"],
+            ["BIGINT", "notANumber"],
+            ["BIGINT", "0,0"],
+            ["BIGINT", "2,0"],
+            ["BIGINT", "-10"],
+            ["BIGINT", "4"],
+            ["REAL", "notANumber"],
+            ["REAL", "0,0"],
+            ["REAL", "2,0"],
+            ["REAL", "-10"],
+            ["REAL", "8"],
+            ["FLOAT", "notANumber"],
+            ["FLOAT", "0,0"],
+            ["FLOAT", "2,0"],
+            ["FLOAT", "-10"],
+            ["FLOAT", "4"]
         ];
     }
 
@@ -260,6 +362,34 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
             ["0"],
             ["4097"],
             ["-1"]
+        ];
+    }
+
+    public function invalidBooleanLengths()
+    {
+        return [
+            ["a"],
+            ["0"],
+            ["4097"],
+            ["-1"]
+        ];
+    }
+
+    public function invalidDateLengths()
+    {
+        return [
+            ["DATE", "a"],
+            ["DATE", "-1"],
+            ["DATE", "0"],
+            ["DATE", "2"],
+            ["DATE", "10"],
+            ["DATE", "4,2"],
+            ["TIMESTAMP", "a"],
+            ["TIMESTAMP", "-1"],
+            ["TIMESTAMP", "0"],
+            ["TIMESTAMP", "2"],
+            ["TIMESTAMP", "10"],
+            ["TIMESTAMP", "8,2"]
         ];
     }
 
