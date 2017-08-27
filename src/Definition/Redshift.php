@@ -64,6 +64,11 @@ class Redshift extends Common
         if (!$this->isNullable()) {
             $definition .= " NOT NULL";
         }
+
+        if ($this->getDefault() && $this->getDefault() != "") {
+            $definition .= " DEFAULT '" . $this->getDefault() . "'";
+        }
+
         if ($this->getCompression() && $this->getCompression() != "") {
             $definition .= " ENCODE " . $this->getCompression();
         }

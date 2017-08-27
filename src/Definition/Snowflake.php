@@ -53,6 +53,11 @@ class Snowflake extends Common
         if (!$this->isNullable()) {
             $definition .= " NOT NULL";
         }
+
+        if ($this->getDefault() && $this->getDefault() != "") {
+            $definition .= " DEFAULT '" . $this->getDefault() . "'";
+        }
+
         return $definition;
     }
 
