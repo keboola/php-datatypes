@@ -22,6 +22,8 @@ class Snowflake extends Common
         "TIME",
         "TIMESTAMP", "TIMESTAMP_NTZ", "TIMESTAMP_LTZ", "TIMESTAMP_TZ",
         "VARIANT",
+        "OBJECT",
+        "ARRAY",
         "BINARY","VARBINARY",
     ];
 

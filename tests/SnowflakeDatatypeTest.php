@@ -205,9 +205,11 @@ class SnowflakeDatatypeTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testVariant()
+    public function testObjectTypes()
     {
         new Snowflake("VARIANT");
+        new Snowflake("OBJECT");
+        new Snowflake("ARRAY");
     }
 
     public function invalidNumericLengths()
