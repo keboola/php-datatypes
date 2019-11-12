@@ -222,9 +222,6 @@ class Oracle extends Common
             case "DATE":
                 $basetype = BaseType::DATE;
                 break;
-            case "DATE":
-                $basetype = BaseType::TIMESTAMP;
-                break;
             default:
                 $basetype = BaseType::STRING;
                 break;
