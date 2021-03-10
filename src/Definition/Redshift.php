@@ -226,6 +226,21 @@ class Redshift extends Common
                     break;
                 }
                 break;
+            case "INTEGER":
+            case "SMALLINT":
+            case "BIGINT":
+                if (is_null($length) || $length == "") {
+                    break;
+                }
+                if (!is_numeric($length)) {
+                    $valid = false;
+                    break;
+                }
+                if ((int)$length <= 0 || (int)$length > 255) {
+                    $valid = false;
+                    break;
+                }
+                break;
             default:
                 if (!is_null($length) && $length != "") {
                     $valid = false;

@@ -205,6 +205,11 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
                 ''
             ],
             [
+                'int',
+                ['length' => '32'],
+                '32'
+            ],
+            [
                 'numeric',
                 [],
                 ''
