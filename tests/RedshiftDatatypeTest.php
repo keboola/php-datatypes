@@ -86,8 +86,28 @@ class RedshiftDatatypeTest extends \PHPUnit_Framework_TestCase
 
     public function testSQLDefinition()
     {
-        $datatype = new Redshift("VARCHAR", ["length" => "50", "nullable" => true, "compression" => "ZSTD"]);
-        $this->assertEquals("VARCHAR(50) ENCODE ZSTD", $datatype->getSQLDefinition());
+        $datatype = new Redshift(
+            'VARCHAR',
+            [
+                'length' => '50',
+                'nullable' => true,
+                'compression' => 'ZSTD',
+            ]
+        );
+
+        $this->assertSame('VARCHAR(50) ENCODE ZSTD', $datatype->getSQLDefinition());
+
+        $datatype = new Redshift(
+            'VARCHAR',
+            [
+                'length' => '20',
+                'nullable' => false,
+                'compression' => 'LZO',
+                'default' => '\'test\''
+            ]
+        );
+
+        $this->assertEquals('VARCHAR(20) NOT NULL DEFAULT \'test\' ENCODE LZO', $datatype->getSQLDefinition());
     }
 
     public function testToArray()
