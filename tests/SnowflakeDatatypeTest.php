@@ -99,20 +99,32 @@ class SnowflakeDatatypeTest extends \PHPUnit_Framework_TestCase
 
     public function testSqlDefinition()
     {
-        $definition = new Snowflake("NUMERIC", ["length" => ""]);
-        $this->assertTrue($definition->getSQLDefinition() === "NUMERIC");
+        $definition = new Snowflake('NUMERIC', ['length' => '']);
+        $this->assertSame('NUMERIC', $definition->getSQLDefinition());
 
-        $definition = new Snowflake("TIMESTAMP_TZ", ["length" => "0"]);
-        $this->assertTrue($definition->getSQLDefinition() === "TIMESTAMP_TZ(0)");
+        $definition = new Snowflake('NUMERIC', ['default' => 123]);
+        $this->assertSame('NUMERIC DEFAULT 123', $definition->getSQLDefinition());
 
-        $definition = new Snowflake("TIMESTAMP_TZ", ["length" => "9"]);
-        $this->assertTrue($definition->getSQLDefinition() === "TIMESTAMP_TZ(9)");
+        $definition = new Snowflake('NUMERIC', ['default' => 123, 'nullable' => false]);
+        $this->assertSame('NUMERIC NOT NULL DEFAULT 123', $definition->getSQLDefinition());
 
-        $definition = new Snowflake("TIMESTAMP_TZ", ["length" => ""]);
-        $this->assertTrue($definition->getSQLDefinition() === "TIMESTAMP_TZ");
+        $definition = new Snowflake('TIMESTAMP_TZ', ['length' => '0']);
+        $this->assertSame('TIMESTAMP_TZ(0)', $definition->getSQLDefinition());
 
-        $definition = new Snowflake("TIMESTAMP_TZ");
-        $this->assertTrue($definition->getSQLDefinition() === "TIMESTAMP_TZ");
+        $definition = new Snowflake('TIMESTAMP_TZ', ['length' => '9']);
+        $this->assertSame('TIMESTAMP_TZ(9)', $definition->getSQLDefinition());
+
+        $definition = new Snowflake('TIMESTAMP_TZ', ['length' => '']);
+        $this->assertSame('TIMESTAMP_TZ', $definition->getSQLDefinition());
+
+        $definition = new Snowflake('TIMESTAMP_TZ', ['length' => '', 'nullable' => false]);
+        $this->assertSame('TIMESTAMP_TZ NOT NULL', $definition->getSQLDefinition());
+
+        $definition = new Snowflake('VARCHAR', ['default' => '\'test\'']);
+        $this->assertSame('VARCHAR DEFAULT \'test\'', $definition->getSQLDefinition());
+
+        $definition = new Snowflake('TIMESTAMP_TZ');
+        $this->assertSame('TIMESTAMP_TZ', $definition->getSQLDefinition());
     }
 
     /**
