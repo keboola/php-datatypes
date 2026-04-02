@@ -7,3 +7,9 @@ services:
     <<: *base
     volumes:
       - .:/code
+
+  ci:
+    <<: *base
+    image: ci-php-datatypes
+    volumes:
+      - .:/code
