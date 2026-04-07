@@ -1,15 +1,18 @@
 services:
-  app: &base
-    build:
-      context: .
-
   dev:
-    <<: *base
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: package-ci
+    image: keboola/php-datatypes
     volumes:
-      - .:/code
+      - ./:/code
 
-  ci:
-    <<: *base
-    image: ci-php-datatypes
+  dev-xdebug:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: package-ci-xdebug
+    image: keboola/php-datatypes-xdebug
     volumes:
-      - .:/code
+      - ./:/code
