@@ -12,7 +12,7 @@ use RuntimeException;
 class CommonDatatypeTest extends TestCase
 {
     /**
-     * @param array{length?:string|null, nullable?:bool, default?:string|null} $options
+     * @param array{length?:string|null, nullable?:bool, default?:string|null, description?:string|null} $options
      */
     private function createCommonInstance(
         string $type,
@@ -23,7 +23,7 @@ class CommonDatatypeTest extends TestCase
             private string $basetypeValue;
 
             /**
-             * @param array{length?:string|null, nullable?:bool, default?:string|null} $options
+             * @param array{length?:string|null, nullable?:bool, default?:string|null, description?:string|null} $options
              */
             public function __construct(string $type, array $options, string $basetype)
             {
@@ -82,6 +82,26 @@ class CommonDatatypeTest extends TestCase
         $this->assertTrue($datatype->getLength() === '50');
         $this->assertTrue(!$datatype->isNullable());
         $this->assertTrue($datatype->getDefault() === '123');
+    }
+
+    public function testDescriptionConstructorOption(): void
+    {
+        $datatype = $this->createCommonInstance(
+            'VARCHAR',
+            ['description' => 'Customer-facing column description'],
+        );
+
+        $this->assertSame('Customer-facing column description', $datatype->getDescription());
+    }
+
+    public function testNullDescriptionConstructorOption(): void
+    {
+        $datatype = $this->createCommonInstance(
+            'VARCHAR',
+            ['description' => null],
+        );
+
+        $this->assertNull($datatype->getDescription());
     }
 
     public function testToMetadata(): void
@@ -169,6 +189,23 @@ class CommonDatatypeTest extends TestCase
             ],
             ],
             $md,
+        );
+    }
+
+    public function testToMetadataWithDescription(): void
+    {
+        $datatype = $this->createCommonInstance(
+            'VARCHAR',
+            ['description' => 'Customer-facing column description'],
+            'STRING',
+        );
+
+        $this->assertContains(
+            [
+                'key' => Common::KBC_METADATA_KEY_DESCRIPTION,
+                'value' => 'Customer-facing column description',
+            ],
+            $datatype->toMetadata(),
         );
     }
 }

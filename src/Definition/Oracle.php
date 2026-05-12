@@ -49,7 +49,7 @@ class Oracle extends Common
     ];
 
     /**
-     * @param array{length?:string|null, nullable?:bool, default?:string|null} $options
+     * @param array{length?:string|null, nullable?:bool, default?:string|null, description?:string|null} $options
      * @throws InvalidOptionException
      * @throws InvalidTypeException
      * @throws InvalidLengthException
@@ -57,7 +57,7 @@ class Oracle extends Common
     public function __construct(string $type, array $options = [])
     {
         $this->validateType($type);
-        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default']);
+        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'description']);
         if ($diff !== []) {
             throw new InvalidOptionException("Option '{$diff[0]}' not supported");
         }
@@ -102,16 +102,20 @@ class Oracle extends Common
     }
 
     /**
-     * @return array{type:string, length:string|null, nullable:bool, compression?:mixed}
+     * @return array{type:string, length:string|null, nullable:bool, default:string|null, description?:string}
      */
     public function toArray(): array
     {
-        return [
+        $result = [
             'type' => $this->type,
             'length' => $this->length,
             'nullable' => $this->nullable,
             'default' => $this->default,
         ];
+        if ($this->getDescription() !== null) {
+            $result['description'] = $this->getDescription();
+        }
+        return $result;
     }
 
     /**

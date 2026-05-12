@@ -209,6 +209,29 @@ class SnowflakeDatatypeTest extends BaseDatatypeTestCase
         }
     }
 
+    public function testDescriptionRoundTripsThroughArray(): void
+    {
+        $definition = new Snowflake(
+            Snowflake::TYPE_VARCHAR,
+            [
+                'length' => '50',
+                'nullable' => false,
+                'description' => 'Customer-facing column description',
+            ],
+        );
+
+        $this->assertSame('Customer-facing column description', $definition->getDescription());
+        $this->assertSame(
+            [
+                'type' => 'VARCHAR',
+                'length' => '50',
+                'nullable' => false,
+                'description' => 'Customer-facing column description',
+            ],
+            $definition->toArray(),
+        );
+    }
+
     public function testInvalidLengthOption(): void
     {
         $this->expectException(InvalidOptionException::class);

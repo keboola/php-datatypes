@@ -148,6 +148,29 @@ class BigqueryDatatypeTest extends BaseDatatypeTestCase
         }
     }
 
+    public function testDescriptionRoundTripsThroughArray(): void
+    {
+        $definition = new Bigquery(
+            Bigquery::TYPE_STRING,
+            [
+                'length' => '50',
+                'nullable' => false,
+                'description' => 'Customer-facing column description',
+            ],
+        );
+
+        $this->assertSame('Customer-facing column description', $definition->getDescription());
+        $this->assertSame(
+            [
+                'type' => 'STRING',
+                'length' => '50',
+                'nullable' => false,
+                'description' => 'Customer-facing column description',
+            ],
+            $definition->toArray(),
+        );
+    }
+
     public function testInvalidType(): void
     {
         $this->expectException(InvalidTypeException::class);

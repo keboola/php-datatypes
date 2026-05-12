@@ -44,7 +44,13 @@ class GenericStorage extends Common
 
     /**
      * Base constructor.
-     * @param array{length?:string|null, nullable?:bool, default?:string|null, format?:string|null} $options
+     * @param array{
+     *     length?:string|null,
+     *     nullable?:bool,
+     *     default?:string|null,
+     *     format?:string|null,
+     *     description?:string|null
+     * } $options
      */
     public function __construct(string $type, array $options = [])
     {
@@ -85,7 +91,7 @@ class GenericStorage extends Common
     }
 
     /**
-     * @return array{type:string,length:string|null,nullable:bool,default?:string,format?:string}
+     * @return array{type:string,length:string|null,nullable:bool,default?:string,format?:string,description?:string}
      */
     public function toArray(): array
     {
@@ -99,6 +105,9 @@ class GenericStorage extends Common
         }
         if ($this->getFormat()) {
             $result['format'] = $this->getFormat();
+        }
+        if ($this->getDescription() !== null) {
+            $result['description'] = $this->getDescription();
         }
         return $result;
     }

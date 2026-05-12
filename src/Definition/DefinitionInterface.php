@@ -9,7 +9,7 @@ interface DefinitionInterface
     public function getSQLDefinition(): string;
 
     /**
-     * @return array{type:string, length:string|null, nullable:bool, compression?:mixed}
+     * @return array{type:string, length:string|null, nullable:bool, description?:string, compression?:mixed}
      */
     public function toArray(): array;
 
@@ -22,6 +22,8 @@ interface DefinitionInterface
     public function isNullable(): bool;
 
     public function getDefault(): ?string;
+
+    public function getDescription(): ?string;
 
     public static function getTypeByBasetype(string $basetype): string;
 

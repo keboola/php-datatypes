@@ -34,7 +34,8 @@ class MySQL extends Common
      * @param array{
      *     length?:string|null|array<string, int|string|null>,
      *     nullable?:bool,
-     *     default?:string|null
+     *     default?:string|null,
+     *     description?:string|null
      * } $options
      * @throws InvalidOptionException
      */
@@ -43,7 +44,7 @@ class MySQL extends Common
         $this->validateType($type);
         $options['length'] = $this->processLength($options);
         $this->validateLength($type, $options['length'] ?? null);
-        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default']);
+        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'description']);
         if ($diff !== []) {
             throw new InvalidOptionException("Option '{$diff[0]}' not supported");
         }
@@ -63,15 +64,19 @@ class MySQL extends Common
     }
 
     /**
-     * @return array{type:string,length:string|null,nullable:bool}
+     * @return array{type:string,length:string|null,nullable:bool,description?:string}
      */
     public function toArray(): array
     {
-        return [
+        $result = [
             'type' => $this->getType(),
             'length' => $this->getLength(),
             'nullable' => $this->isNullable(),
         ];
+        if ($this->getDescription() !== null) {
+            $result['description'] = $this->getDescription();
+        }
+        return $result;
     }
 
     /**

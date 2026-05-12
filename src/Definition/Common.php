@@ -13,6 +13,7 @@ abstract class Common implements DefinitionInterface
     public const KBC_METADATA_KEY_BASETYPE = 'KBC.datatype.basetype';
     public const KBC_METADATA_KEY_LENGTH = 'KBC.datatype.length';
     public const KBC_METADATA_KEY_DEFAULT = 'KBC.datatype.default';
+    public const KBC_METADATA_KEY_DESCRIPTION = 'KBC.description';
 
     public const KBC_METADATA_KEY_COMPRESSION = 'KBC.datatype.compression';
     public const KBC_METADATA_KEY_FORMAT = 'KBC.datatype.format';
@@ -21,6 +22,7 @@ abstract class Common implements DefinitionInterface
         self::KBC_METADATA_KEY_NULLABLE,
         self::KBC_METADATA_KEY_LENGTH,
         self::KBC_METADATA_KEY_DEFAULT,
+        self::KBC_METADATA_KEY_DESCRIPTION,
     ];
 
     protected string $type;
@@ -31,10 +33,12 @@ abstract class Common implements DefinitionInterface
 
     protected ?string $default = null;
 
+    protected ?string $description = null;
+
     /**
      * Common constructor.
      *
-     * @param array{length?:string|null, nullable?:bool, default?:string|null} $options
+     * @param array{length?:string|null, nullable?:bool, default?:string|null, description?:string|null} $options
      */
     public function __construct(string $type, array $options = [])
     {
@@ -47,6 +51,9 @@ abstract class Common implements DefinitionInterface
         }
         if (isset($options['default'])) {
             $this->default = (string) $options['default'];
+        }
+        if (array_key_exists('description', $options) && $options['description'] !== null) {
+            $this->description = (string) $options['description'];
         }
     }
 
@@ -68,6 +75,11 @@ abstract class Common implements DefinitionInterface
     public function getDefault(): ?string
     {
         return $this->default;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 
     abstract public function getSQLDefinition(): string;
@@ -120,6 +132,12 @@ abstract class Common implements DefinitionInterface
             $metadata[] = [
                 'key' => self::KBC_METADATA_KEY_DEFAULT,
                 'value' => $this->getDefault(),
+            ];
+        }
+        if ($this->getDescription() !== null) {
+            $metadata[] = [
+                'key' => self::KBC_METADATA_KEY_DESCRIPTION,
+                'value' => $this->getDescription(),
             ];
         }
         return $metadata;

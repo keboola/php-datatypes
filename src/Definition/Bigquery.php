@@ -140,6 +140,7 @@ class Bigquery extends Common
      *     length?:string|null,
      *     nullable?:bool,
      *     default?:string|null,
+     *     description?:string|null,
      *     fieldAsArray?:BigqueryTableFieldSchema
      * } $options
      * @throws InvalidLengthException
@@ -151,7 +152,7 @@ class Bigquery extends Common
         $this->validateType($type);
         $this->validateLength($type, $options['length'] ?? null);
 
-        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'fieldAsArray']);
+        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'description', 'fieldAsArray']);
         if ($diff !== []) {
             throw new InvalidOptionException("Option '{$diff[0]}' not supported");
         }
@@ -255,15 +256,19 @@ class Bigquery extends Common
     }
 
     /**
-     * @return array{type:string,length:string|null,nullable:bool}
+     * @return array{type:string,length:string|null,nullable:bool,description?:string}
      */
     public function toArray(): array
     {
-        return [
+        $result = [
             'type' => $this->getType(),
             'length' => $this->getLength(),
             'nullable' => $this->isNullable(),
         ];
+        if ($this->getDescription() !== null) {
+            $result['description'] = $this->getDescription();
+        }
+        return $result;
     }
 
     public static function getTypeByBasetype(string $basetype): string

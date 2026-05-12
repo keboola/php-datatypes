@@ -31,7 +31,13 @@ class Redshift extends Common
     /**
      * Redshift constructor.
      *
-     * @param array{length?:string|null, nullable?:bool, default?:string|null, compression?:string|null} $options
+     * @param array{
+     *     length?:string|null,
+     *     nullable?:bool,
+     *     default?:string|null,
+     *     compression?:string|null,
+     *     description?:string|null
+     * } $options
      * @throws InvalidOptionException
      */
     public function __construct(string $type, array $options = [])
@@ -44,7 +50,7 @@ class Redshift extends Common
             $this->validateCompression($type, $options['compression']);
             $this->compression = $options['compression'];
         }
-        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'compression']);
+        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'compression', 'description']);
         if ($diff !== []) {
             throw new InvalidOptionException("Option '{$diff[0]}' not supported");
         }
@@ -72,16 +78,20 @@ class Redshift extends Common
     }
 
     /**
-     * @return array{type:string,length:string|null,nullable:bool,compression:string|null}
+     * @return array{type:string,length:string|null,nullable:bool,compression:string|null,description?:string}
      */
     public function toArray(): array
     {
-        return [
+        $result = [
             'type' => $this->getType(),
             'length' => $this->getLength(),
             'nullable' => $this->isNullable(),
             'compression' => $this->getCompression(),
         ];
+        if ($this->getDescription() !== null) {
+            $result['description'] = $this->getDescription();
+        }
+        return $result;
     }
 
     /**
