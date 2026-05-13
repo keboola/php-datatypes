@@ -23,7 +23,12 @@ class CommonDatatypeTest extends TestCase
             private string $basetypeValue;
 
             /**
-             * @param array{length?:string|null, nullable?:bool, default?:string|null, description?:string|null} $options
+             * @param array{
+             *     length?:string|null,
+             *     nullable?:bool,
+             *     default?:string|null,
+             *     description?:string|null
+             * } $options
              */
             public function __construct(string $type, array $options, string $basetype)
             {
