@@ -25,7 +25,8 @@ use LogicException;
  *   scale?: string,
  *   roundingMode?: 'ROUNDING_MODE_UNSPECIFIED'|'ROUND_HALF_AWAY_FROM_ZERO'|'ROUND_HALF_EVEN',
  *   collation?: string,
- *   defaultValueExpression?: string
+ *   defaultValueExpression?: string,
+ *   policyTags?: array{names?: list<string>}
  *  }
  * structure returned by BQ REST API, fields is recursive but this is not supported by phpstan
  * Table schema docs: https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#TableSchema
