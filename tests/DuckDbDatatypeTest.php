@@ -8,6 +8,7 @@ use Generator;
 use Keboola\Datatype\Definition\BaseType;
 use Keboola\Datatype\Definition\DuckDb;
 use Keboola\Datatype\Definition\Exception\InvalidLengthException;
+use Keboola\Datatype\Definition\Exception\InvalidOptionException;
 use Keboola\Datatype\Definition\Exception\InvalidTypeException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -29,6 +30,14 @@ class DuckDbDatatypeTest extends BaseDatatypeTestCase
         $this->expectExceptionMessage('"STRUCT" is not a valid type.');
 
         new DuckDb('STRUCT');
+    }
+
+    public function testUnknownOptionIsRejected(): void
+    {
+        $this->expectException(InvalidOptionException::class);
+        $this->expectExceptionMessage('Option "nulable" not supported');
+
+        new DuckDb(DuckDb::TYPE_VARCHAR, ['nulable' => false]);
     }
 
     public function testSqlDefinitionCarriesLengthAndNullability(): void
