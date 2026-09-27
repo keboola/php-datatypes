@@ -90,6 +90,10 @@ class DuckDb extends Common
     {
         $type = strtoupper($type);
         $this->validateType($type);
+        $diff = array_diff(array_keys($options), ['length', 'nullable', 'default', 'description']);
+        if ($diff !== []) {
+            throw new InvalidOptionException(sprintf('Option "%s" not supported', reset($diff)));
+        }
         $this->validateLength($type, $options['length'] ?? null);
 
         parent::__construct($type, $options);
