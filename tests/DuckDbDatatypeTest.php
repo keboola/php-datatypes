@@ -76,6 +76,9 @@ class DuckDbDatatypeTest extends BaseDatatypeTestCase
         yield 'precision above the DuckDB maximum' => ['39,4'];
         yield 'scale above precision' => ['4,18'];
         yield 'negative scale' => ['18,-1'];
+        yield 'fractional precision' => ['18.5,3'];
+        yield 'exponent precision' => ['18e0,3'];
+        yield 'signed precision' => ['+18,3'];
     }
 
     public function testDecimalAtTheMaximumPrecisionIsAccepted(): void
