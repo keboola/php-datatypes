@@ -211,8 +211,10 @@ class DuckDb extends Common
         }
 
         [$precision, $scale] = $parts;
-        if (!is_numeric($precision) || !is_numeric($scale)) {
-            throw new InvalidLengthException('DECIMAL precision and scale must be numeric.');
+        // Digits only: the length is emitted verbatim into the DDL, so `18.5` or `18e0` must not
+        // pass as an integer after a cast.
+        if (preg_match('/^\d+$/', $precision) !== 1 || preg_match('/^\d+$/', $scale) !== 1) {
+            throw new InvalidLengthException('DECIMAL precision and scale must be non-negative integers.');
         }
 
         $precision = (int) $precision;
