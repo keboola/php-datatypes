@@ -70,6 +70,15 @@ class DuckDb extends Common
         self::TYPE_INTERVAL,
     ];
 
+    /**
+     * Canonical names DuckDB's `DESCRIBE` reports for types this list spells differently;
+     * a column read back from the catalog maps through this before it is validated.
+     */
+    public const DESCRIBED_TYPE_SPELLINGS = [
+        'TIMESTAMP WITH TIME ZONE' => self::TYPE_TIMESTAMPTZ,
+        'FLOAT' => self::TYPE_REAL,
+    ];
+
     /** Only DECIMAL takes a parameter list; every other type here is fixed width. */
     public const TYPES_WITH_LENGTH = [
         self::TYPE_DECIMAL,
