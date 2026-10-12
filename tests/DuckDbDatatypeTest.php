@@ -55,11 +55,8 @@ class DuckDbDatatypeTest extends BaseDatatypeTestCase
         new DuckDb(DuckDb::TYPE_BIGINT, ['length' => '10']);
     }
 
-    /**
-     * @param string|int|null $length
-     */
     #[DataProvider('provideInvalidDecimalLengths')]
-    public function testInvalidDecimalLengthIsRejected($length): void
+    public function testInvalidDecimalLengthIsRejected(string|int|null $length): void
     {
         $this->expectException(InvalidLengthException::class);
 
