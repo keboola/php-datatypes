@@ -199,11 +199,9 @@ class DuckDb extends Common
     }
 
     /**
-     * @param string|int|null $length
-     *
      * @throws InvalidLengthException
      */
-    private function validateLength(string $type, $length = null): void
+    private function validateLength(string $type, string|int|null $length = null): void
     {
         if ($this->isEmpty($length)) {
             return;
