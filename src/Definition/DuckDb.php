@@ -105,7 +105,11 @@ class DuckDb extends Common
         }
         $this->validateLength($type, $options['length'] ?? null);
 
-        parent::__construct($type, $options);
+        // Common keeps the length as a string.
+        $commonOptions = $options;
+        $commonOptions['length'] = isset($options['length']) ? (string) $options['length'] : null;
+
+        parent::__construct($type, $commonOptions);
     }
 
     public function getSQLDefinition(): string
